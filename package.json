@@ -1,0 +1,11 @@
+{
+  "name": "photo-management",
+  "version": "1.0.0",
+  "description": "Photo management project",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JhonnK08/photo-management.git"
+  },
+  "author": "Jhonatan Konopp",
+  "license": "MIT"
+}

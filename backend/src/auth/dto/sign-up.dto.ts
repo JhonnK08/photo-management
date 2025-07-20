@@ -8,6 +8,9 @@ export class SignUpDto {
   name: string;
 
   @IsString()
+  email: string;
+
+  @IsString()
   @MinLength(8)
   password: string;
 }

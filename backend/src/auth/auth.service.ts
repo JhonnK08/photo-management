@@ -8,18 +8,21 @@ import { SignInDto } from './dto/sign-in.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async signIn(dto: SignInDto): Promise<{ access_token: string }> {
-    const user = this.userService.findOne(dto.username);
-    const isPasswordValid = await comparePassword(dto.password, user?.password);
-
-    if (user && isPasswordValid) {
+    const user = await this.userService.findOne(dto.username);
+    if (!user) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.userId, username: user.username };
+
+    const isPasswordValid = await comparePassword(dto.password, user.password);
+    if (isPasswordValid) {
+      throw new UnauthorizedException();
+    }
+    const payload = { sub: user.id, username: user.username };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

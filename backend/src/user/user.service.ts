@@ -14,6 +14,7 @@ export class UserService {
         email: createUserDto.username,
         name: createUserDto.name,
         password: createUserDto.password,
+        username: createUserDto.username,
       },
     });
   }
@@ -25,7 +26,7 @@ export class UserService {
   async findOne(username: string): Promise<User | undefined> {
     const user = await this.prisma.user.findFirst({
       where: {
-        email: username,
+        username: username,
       },
     });
 
@@ -35,12 +36,12 @@ export class UserService {
   update(username: string, updateUserDto: UpdateUserDto) {
     return this.prisma.user.update({
       data: {
-        email: updateUserDto.username,
+        email: updateUserDto.email,
         name: updateUserDto.name,
         password: updateUserDto.password,
       },
       where: {
-        email: username,
+        username: username,
       },
     });
   }
@@ -49,7 +50,7 @@ export class UserService {
     try {
       await this.prisma.user.delete({
         where: {
-          email: username,
+          username: username,
         },
       });
 

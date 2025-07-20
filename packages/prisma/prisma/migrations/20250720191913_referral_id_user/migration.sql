@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `USER` ADD COLUMN `referralId` INTEGER NULL;

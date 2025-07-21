@@ -14,13 +14,13 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const placeholderUser = await this.placeholder.getUserByUsername(
-      createUserDto.username,
+    const placeholderUser = await this.placeholder.getUserByEmail(
+      createUserDto.email,
     );
 
     return this.prisma.user.create({
       data: {
-        email: createUserDto.username,
+        email: createUserDto.email,
         name: createUserDto.name,
         password: createUserDto.password,
         username: createUserDto.username,
@@ -49,16 +49,15 @@ export class UserService {
     return [...filteredPlaceholderUsers, ...databaseUsers];
   }
 
-  async findOne(username: string): Promise<User | undefined> {
+  async findOne(email: string): Promise<User | undefined> {
     const user = await this.prisma.user.findFirst({
       where: {
-        username: username,
+        email: email,
       },
     });
 
     if (!user) {
-      const placeholderUser =
-        await this.placeholder.getUserByUsername(username);
+      const placeholderUser = await this.placeholder.getUserByEmail(email);
 
       return placeholderUser
         ? this.mapPlaceholderUserToUser(placeholderUser)
@@ -68,7 +67,7 @@ export class UserService {
     return user;
   }
 
-  async update(username: string, updateUserDto: UpdateUserDto) {
+  async update(email: string, updateUserDto: UpdateUserDto) {
     try {
       await this.prisma.user.update({
         data: {
@@ -77,15 +76,13 @@ export class UserService {
           password: updateUserDto.password,
         },
         where: {
-          username: username,
+          email: email,
         },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025' || error.code === 'P2016') {
-          throw new NotFoundException(
-            `Can't find user with username ${username}`,
-          );
+          throw new NotFoundException(`Can't find user with email ${email}`);
         }
       }
 
@@ -93,11 +90,11 @@ export class UserService {
     }
   }
 
-  async remove(username: string): Promise<boolean> {
+  async remove(email: string): Promise<boolean> {
     try {
       await this.prisma.user.delete({
         where: {
-          username: username,
+          email: email,
         },
       });
 
@@ -105,9 +102,7 @@ export class UserService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025' || error.code === 'P2016') {
-          throw new NotFoundException(
-            `Can't find user with username ${username}`,
-          );
+          throw new NotFoundException(`Can't find user with email ${email}`);
         }
       }
 

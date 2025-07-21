@@ -13,7 +13,7 @@ export class AuthService {
   ) {}
 
   async signIn(dto: SignInDto): Promise<{ access_token: string }> {
-    const user = await this.userService.findOne(dto.username);
+    const user = await this.userService.findOne(dto.email);
     if (!user) {
       throw new UnauthorizedException();
     }
@@ -22,6 +22,7 @@ export class AuthService {
     if (isPasswordValid) {
       throw new UnauthorizedException();
     }
+
     const payload = { sub: user.id, username: user.username };
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -31,9 +32,14 @@ export class AuthService {
   async signUp(dto: SignUpDto) {
     const hashedPassword = await hashPassword(dto.password);
 
-    return this.userService.create({
+    const user = await this.userService.create({
       ...dto,
       password: hashedPassword,
     });
+
+    const payload = { sub: user.id, username: user.username };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }

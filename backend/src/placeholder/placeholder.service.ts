@@ -57,9 +57,9 @@ export class PlaceholderService {
     return data ?? undefined;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
+  async getUserByEmail(email: string): Promise<User | undefined> {
     const users = await this.getUsers();
 
-    return users.find((user) => user.username === username);
+    return users.find((user) => user.email === email);
   }
 }
